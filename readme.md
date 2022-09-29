@@ -7,7 +7,7 @@ This repo is inspired by some projects (e.g. [YeungKC/Hakuba](https://github.com
 1. Export discussions to `.md` files
 2. Use static site generator to build `.html` pages
 
-This project only does 1. Then the files can be used for any SSG or just as backup. The generated json feed can be used by a feed reader (e.g. with raw Github url).
+This project only does 1. Then the files can be used for any SSG or just as backup. The generated json feed can be used by a feed reader ([demo](https://cdn.jsdelivr.net/gh/King-of-Infinite-Space/gh-discussions-export/output/feed.json)).
 
 #### Usage
 

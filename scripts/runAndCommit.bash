@@ -11,11 +11,11 @@ git config core.quotepath off
 
 git add .
 
-MSG=$(git status --porcelain | sed '/index.md/d' | sed 's/\([A-Z]\s\).*\//\1/')
-# removes subdirs and the line with index.md
+MSG=$(git status --porcelain | sed '/index.md/d'  | sed '/feed.json/d' | sed 's/\([A-Z]\s\).*\//\1/')
+# removes subdirs and unwanted lines
 N_LINES=$(echo "$MSG" | wc -l)
 if [ "$N_LINES" -gt 3 ]; then
-  MSG="Updated $N_LINES files"
+  MSG="Updated $N_LINES posts"
 fi
 git commit -m "$MSG"
 git push

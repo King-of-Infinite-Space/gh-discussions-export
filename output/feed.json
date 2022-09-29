@@ -1,0 +1,21 @@
+{
+	"version": "https://jsonfeed.org/version/1.1",
+	"title": "King-of-Infinite-Space/gh-discussions-export/discussions",
+	"home_page_url": "https://github.com/King-of-Infinite-Space/gh-discussions-export/discussions",
+	"items": [
+		{
+			"id": "https://github.com/King-of-Infinite-Space/gh-discussions-export/discussions/1",
+			"url": "https://github.com/King-of-Infinite-Space/gh-discussions-export/discussions/1",
+			"title": "Demo post",
+			"content_html": "<p dir=\"auto\">some content here (ref <sup><a href=\"#user-content-fn-1-180285632b32f54cad292f2db012319b\" id=\"user-content-fnref-1-180285632b32f54cad292f2db012319b\" data-footnote-ref=\"\" aria-describedby=\"footnote-label\">1</a></sup>)</p>\n<ol dir=\"auto\">\n<li>list item <strong>bold</strong></li>\n<li>list item <em>italic</em></li>\n</ol>\n<p dir=\"auto\">Inline math <math-renderer class=\"js-inline-math\" style=\"display: inline\" data-static-url=\"https://github.githubassets.com/static\" data-run-id=\"180285632b32f54cad292f2db012319b\">$E = m c^2$</math-renderer></p>\n<section data-footnotes=\"\" class=\"footnotes\"><h2 id=\"footnote-label\" class=\"sr-only\">Footnotes</h2>\n<ol dir=\"auto\">\n<li id=\"user-content-fn-1-180285632b32f54cad292f2db012319b\">\n<p dir=\"auto\">footnote <a href=\"#user-content-fnref-1-180285632b32f54cad292f2db012319b\" data-footnote-backref=\"\" aria-label=\"Back to content\" class=\"data-footnote-backref\"><g-emoji class=\"g-emoji\" alias=\"leftwards_arrow_with_hook\" fallback-src=\"https://github.githubassets.com/images/icons/emoji/unicode/21a9.png\">↩</g-emoji></a></p>\n</li>\n</ol>\n</section>",
+			"date_published": "2022-09-29T03:10:17Z",
+			"date_modified": null,
+			"authors": [
+				"King-of-Infinite-Space"
+			],
+			"tags": [
+				"good first issue"
+			]
+		}
+	]
+}

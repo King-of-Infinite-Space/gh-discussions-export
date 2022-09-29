@@ -1,0 +1,20 @@
+name: export discussions
+
+on:
+  discussion:
+    types: [created, edited, deleted]
+  workflow_dispatch:
+
+jobs:
+  discussion-to-md:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: "~1.25"
+
+      - uses: actions/checkout@v3
+
+      - run: scripts/runAndCommit.bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

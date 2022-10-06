@@ -11,7 +11,7 @@ git config core.quotepath off
 
 git add .
 
-MSG=$(git status --porcelain | sed '/index.md/d'  | sed '/feed.json/d' | sed 's/\([A-Z]\s\).*\//\1/')
+MSG=$(git status --porcelain | sed '/index.md/d'  | sed '/feed.*/d' | sed 's/\([A-Z]\s\).*\//\1/')
 # removes subdirs and unwanted lines
 N_LINES=$(echo "$MSG" | wc -l)
 if [ "$N_LINES" -gt 3 ]; then

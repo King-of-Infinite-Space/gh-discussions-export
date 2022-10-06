@@ -10,21 +10,17 @@ export default {
   // where to put the generated files
   generateIndex: true,
   // whether to generate index.md (a list of posts and labels)
-  generateFeed: true,
-  // whether to generate feed.json
-
+  extraFrontmatterIndex: {},
+  extraFrontmatterPost: {},
+  // extra front matter for index.md and posts (e.g. specify a layout)
   postUseJson: false,
   homeUseJson: false,
   // if true, use json frontmatter instead of yaml for posts / homepage
 
+  generateJsonFeed: true,
+  generateRssFeed: true,
+  // whether to generate feed
+
   postsInFeed: 10,
   // number of posts to include in the feed
-  feedTopInfo: {},
-  // override default top level feed info
-  // for details see https://www.jsonfeed.org/version/1.1/
-  feedPostInfo: (post) => {
-    return {}
-  },
-  // a fuction that returns info for each post in feed,
-  // override default post info
 }

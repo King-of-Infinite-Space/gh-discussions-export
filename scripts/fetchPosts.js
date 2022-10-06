@@ -1,6 +1,7 @@
 import "https://deno.land/std@0.153.0/dotenv/load.ts" // load env vars from .env
 import YAML from "https://esm.sh/yaml@2.1.1"
 import uslug from "https://esm.sh/uslug@1.0.4"
+import RSS from "https://esm.sh/rss@1.2.2"
 
 import { countWordsRounded } from "./countWords.js"
 import config from "./config.js"
@@ -160,7 +161,7 @@ function writePosts(postList) {
       "-" +
       uslug(post.title.replace(/\/|\./g, "-"))
 
-    const frontmatter = Object.assign({}, post)
+    const frontmatter = Object.assign({}, post, config.extraFrontmatterPost)
     delete frontmatter.body
     delete frontmatter.bodyText
     delete frontmatter.bodyHTML
@@ -178,8 +179,8 @@ function writePosts(postList) {
  * @param {Array} postList
  * @param {Array} labelList
  */
-function writeMetadata(postList, labelList, yaml = true) {
-  const metadata = {}
+function writeIndex(postList, labelList, yaml = true) {
+  const metadata = Object.assign({}, config.extraFrontmatterIndex)
   metadata.labels = labelList
   metadata.posts = postList.map((post) => {
     const { body, bodyText, bodyHTML, ...rest } = post
@@ -196,16 +197,16 @@ function writeMetadata(postList, labelList, yaml = true) {
  * @param {Array[Object]} postList processed post data object.
  * @param {Number} number how many posts to include in the feed.
  */
-function writeFeed(postList) {
+function writeJsonFeed(postList) {
   // for details see https://www.jsonfeed.org/version/1.1/
+  const filename = "feed.json"
   const feed = {
     version: "https://jsonfeed.org/version/1.1",
     title: `${owner}/${repo}/discussions`,
     // above are required fields
     home_page_url: `https://github.com/${owner}/${repo}/discussions`,
-    // feed_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/${config.outputDir}/feed.json`,
+    feed_url: `https://cdn.jsdelivr.net/gh/${owner}/${repo}/${config.outputDir}/${filename}`,
     // above are strongly recommended fields
-    ...config.feedTopInfo,
     items: [],
   }
   let i = 0
@@ -220,7 +221,6 @@ function writeFeed(postList) {
       date_modified: post.lastEditedAt,
       authors: [post.author],
       tags: post.labels,
-      ...config.feedPostInfo(post),
     })
     i++
     if (i >= config.feedPostCount) {
@@ -229,9 +229,42 @@ function writeFeed(postList) {
   }
 
   Deno.writeTextFileSync(
-    `${config.outputDir}/feed.json`,
+    `${config.outputDir}/${filename}`,
     JSON.stringify(feed, null, "\t")
   )
+}
+
+/**
+ * Write Discussions to rss feed.
+ * @param {Array[Object]} postList processed post data object.
+ * @param {Number} number how many posts to include in the feed.
+ */
+function writeRssFeed(postList) {
+  // for details see https://www.npmjs.com/package/rss
+  const filename = "feed.rss"
+  const feed = new RSS({
+    title: `${owner}/${repo}/discussions`,
+    site_url: `https://github.com/${owner}/${repo}/discussions`,
+    feed_url: `https://cdn.jsdelivr.net/gh/${owner}/${repo}/${config.outputDir}/${filename}`,
+  })
+  let i = 0
+  for (const post of postList) {
+    feed.item({
+      url: post.url,
+      title: post.title,
+      description: post.bodyHTML,
+      date: post.createdAt,
+      // above are required fields
+      author: post.author,
+      categories: post.labels,
+    })
+    i++
+    if (i >= config.feedPostCount) {
+      break
+    }
+  }
+
+  Deno.writeTextFileSync(`${config.outputDir}/${filename}`, feed.xml())
 }
 
 async function main() {
@@ -252,12 +285,16 @@ async function main() {
   writePosts(postList)
   console.log("\tWrote post files")
   if (config.generateIndex) {
-    writeMetadata(postList, labelList)
+    writeIndex(postList, labelList)
     console.log("\tWrote index.md")
   }
-  if (config.generateFeed) {
-    writeFeed(postList)
-    console.log("\tWrote feed.json")
+  if (config.generateJsonFeed) {
+    writeJsonFeed(postList)
+    console.log("\tWrote json feed")
+  }
+  if (config.generateRssFeed) {
+    writeRssFeed(postList)
+    console.log("\tWrote rss feed")
   }
   console.log("Done")
   // writeFeed(postData)

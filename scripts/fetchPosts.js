@@ -113,9 +113,18 @@ function processPosts(rawPostList) {
  * @param {Array[Object]} postList
  * @returns {Array[Object]} labelList
  */
-function getLabelList(postList) {
+function getLabelsAndCategories(postList) {
   const labelDict = {}
+  const categoryDict = {}
   postList.forEach((post) => {
+    if (!categoryDict[post.category]) {
+      categoryDict[post.category] = {
+        name: post.category,
+        count: 0,
+      }
+    }
+    categoryDict[post.category].count += 1
+
     post.labels.forEach((label) => {
       if (!labelDict[label]) {
         labelDict[label] = {
@@ -128,8 +137,10 @@ function getLabelList(postList) {
   })
 
   const labelList = Object.values(labelDict).sort((a, b) => b.count - a.count)
-
-  return labelList
+  const categoryList = Object.values(categoryDict).sort(
+    (a, b) => b.count - a.count
+  )
+  return [labelList, categoryList]
 }
 
 /**
@@ -159,8 +170,9 @@ function writePosts(postList) {
  * @param {Array} postList
  * @param {Array} labelList
  */
-function writeIndex(postList, labelList) {
+function writeIndex(postList, labelList, categoryList) {
   const metadata = Object.assign({}, config.extraFrontmatterIndex)
+  metadata.categories = categoryList
   metadata.labels = labelList
   metadata.posts = postList.map((post) => {
     const { body, bodyText, bodyHTML, ...rest } = post
@@ -260,7 +272,7 @@ async function main() {
   console.log(`\tFetched ${rawPostList.length} discussions`)
   console.log("Processing posts and labels")
   const postList = processPosts(rawPostList)
-  const labelList = getLabelList(postList)
+  const [labelList, categoryList] = getLabelsAndCategories(postList)
   console.log("Writing files")
   try {
     Deno.mkdirSync(join(config.outputDir, config.postSubDir), {
@@ -274,7 +286,7 @@ async function main() {
   writePosts(postList)
   console.log("\tWrote post files")
   if (config.generateIndex) {
-    writeIndex(postList, labelList)
+    writeIndex(postList, labelList, categoryList)
     console.log("\tWrote index.md")
   }
   if (config.generateJsonFeed) {

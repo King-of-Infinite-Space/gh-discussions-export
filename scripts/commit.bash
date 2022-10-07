@@ -1,10 +1,3 @@
-deno run --allow-net --allow-env --allow-read --allow-write scripts/fetchPosts.js
-
-exit_code=$?
-if [ $exit_code -gt 0 ]; then
-  exit 1
-fi
-
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git config core.quotepath off

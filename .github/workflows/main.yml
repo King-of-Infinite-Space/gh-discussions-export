@@ -7,6 +7,8 @@ on:
 
 jobs:
   discussion-to-md:
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     steps:
       - uses: denoland/setup-deno@v1
@@ -15,6 +17,6 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - run: scripts/runAndCommit.bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: deno run --allow-net --allow-env --allow-read --allow-write scripts/fetchPosts.js
+
+      - run: scripts/commit.bash

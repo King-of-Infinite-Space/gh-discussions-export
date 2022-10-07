@@ -270,19 +270,28 @@ async function main() {
   console.log("Fetching discussions")
   const rawPostList = await fetchAllDiscussions(repo, owner, token)
   console.log(`\tFetched ${rawPostList.length} discussions`)
+
   console.log("Processing posts and labels")
   const postList = processPosts(rawPostList)
   const [labelList, categoryList] = getLabelsAndCategories(postList)
-  console.log("Writing files")
+
+  console.log("Preparing folders")
+  const postDir = join(config.outputDir, config.postSubDir)
   try {
-    Deno.mkdirSync(join(config.outputDir, config.postSubDir), {
+    Deno.removeSync(config.outputDir, {
       recursive: true,
     })
   } catch (e) {
-    if (!e instanceof Deno.errors.AlreadyExists) {
+    if (!(e instanceof Deno.errors.NotFound)) {
       throw e
     }
   }
+  Deno.mkdirSync(postDir, {
+    recursive: true,
+  })
+  console.log("\tposts will be saved to", postDir)
+
+  console.log("Writing files")
   writePosts(postList)
   console.log("\tWrote post files")
   if (config.generateIndex) {
@@ -298,8 +307,6 @@ async function main() {
     console.log("\tWrote rss feed")
   }
   console.log("Done")
-  // writeFeed(postData)
-  // may use VuePress instead
 }
 
 main()

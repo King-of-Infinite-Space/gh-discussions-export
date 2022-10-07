@@ -9,7 +9,7 @@ export default {
   // if empty, all are allowed
 
   outputDir: "output",
-  // relative to the root of the repo
+  // relative to current working directory
   postSubDir: "posts",
   // relative to outputDir
   generateIndex: true,
@@ -19,11 +19,11 @@ export default {
   // if true, use json frontmatter instead of yaml for posts / homepage
 
   formatFilename: getFilename,
-  // function to format the filename of a post
+  // function to format the filename of a post, default: YYMM-titleslug
   extraFrontmatterPost: (post) => {
-    // add extra entries to each post's frontmatter
     const wordCounts = countWordsRounded(post.bodyText)
     return {
+      // add entries to post frontmatter
       countZH: wordCounts.zh,
       countEN: wordCounts.en,
       excerpt: getExcerpt(post.bodyText),
@@ -31,8 +31,9 @@ export default {
   },
 
   extraFrontmatterIndex: (metadata) => {
-    // add extra frontmatter to index.md (e.g. layout)
-    return {}
+    return {
+      // add entries to index.md frontmatter (e.g. layout)
+    }
   },
 
   generateJsonFeed: true,

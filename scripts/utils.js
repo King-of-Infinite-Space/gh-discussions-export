@@ -1,4 +1,24 @@
 import wordsCount from "https://esm.sh/words-count@2.0.2"
+import uslug from "https://esm.sh/uslug@1.0.4"
+
+export const getFilename = (post) => {
+  // filename of the generated md files
+  return (
+    new Date(post.createdAt).toISOString().slice(2, 7).replace("-", "") +
+    "-" +
+    uslug(post.title.replace(/\/|\./g, "-"))
+  )
+}
+
+export function getExcerpt(text) {
+  const firstPara = text.split("\n\n")[0]
+  let excerpt = firstPara.slice(0, 100)
+  const split = excerpt.split("\n")
+  if (split.length >= 3) {
+    excerpt = split.slice(0, 2).join("\n")
+  }
+  return excerpt
+}
 
 function countWords(text) {
   const punctuations = "『』「」《》〈〉【】〖〗…—-+_=|　".split("")

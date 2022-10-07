@@ -1,24 +1,11 @@
 import "https://deno.land/std@0.153.0/dotenv/load.ts" // load env vars from .env
 import YAML from "https://esm.sh/yaml@2.1.1"
-import uslug from "https://esm.sh/uslug@1.0.4"
 import RSS from "https://esm.sh/rss@1.2.2"
-
-import { countWordsRounded } from "./countWords.js"
 import config from "./config.js"
 
 const sourceRepo = config.sourceRepo || Deno.env.get("GITHUB_REPOSITORY")
 const [owner, repo] = sourceRepo.split("/")
 const token = Deno.env.get("GITHUB_TOKEN")
-
-function getExcerpt(text) {
-  const firstPara = text.split("\n\n")[0]
-  let excerpt = firstPara.slice(0, 100)
-  const split = excerpt.split("\n")
-  if (split.length >= 3) {
-    excerpt = split.slice(0, 2).join("\n")
-  }
-  return excerpt
-}
 
 async function fetchDiscussionsApi(
   repo,
@@ -113,13 +100,7 @@ function processPosts(rawPostList) {
       post.author = rawPost.author.login
       post.category = rawPost.category.name
       post.labels = rawPost.labels.nodes?.map((label) => label.name) || []
-
-      // add info
-      const wordCounts = countWordsRounded(post.bodyText)
-      post.countZH = wordCounts.zh
-      post.countEN = wordCounts.en
-      post.excerpt = getExcerpt(post.bodyText) // for preview and possibly SEO
-
+      Object.assign(post, config.extraFrontmatterPost(post))
       postList.push(post)
     }
   })
@@ -156,19 +137,14 @@ function getLabelList(postList) {
  */
 function writePosts(postList) {
   postList.forEach((post) => {
-    const filename =
-      new Date(post.createdAt).toISOString().slice(2, 7).replace("-", "") +
-      "-" +
-      uslug(post.title.replace(/\/|\./g, "-"))
+    const filename = config.formatFilename(post)
 
-    const frontmatter = Object.assign({}, post, config.extraFrontmatterPost)
-    delete frontmatter.body
-    delete frontmatter.bodyText
-    delete frontmatter.bodyHTML
+    const { body, bodyText, bodyHTML, ...frontmatter } = post
 
     const content = config.postUseJson
       ? `---\n${JSON.stringify(frontmatter, null, "\t")}\n---\n\n${post.body}`
-      : `---\n${YAML.stringify(frontmatter)}\n---\n\n${post.body}`
+      : `---\n${YAML.stringify(frontmatter)}---\n\n${post.body}`
+    // yaml already has a newline at the end
 
     Deno.writeTextFileSync(`${config.outputDir}/${filename}.md`, content)
   })
@@ -179,16 +155,17 @@ function writePosts(postList) {
  * @param {Array} postList
  * @param {Array} labelList
  */
-function writeIndex(postList, labelList, yaml = true) {
+function writeIndex(postList, labelList) {
   const metadata = Object.assign({}, config.extraFrontmatterIndex)
   metadata.labels = labelList
   metadata.posts = postList.map((post) => {
     const { body, bodyText, bodyHTML, ...rest } = post
     return rest
   })
+  Object.assign(metadata, config.extraFrontmatterIndex(metadata))
   const content = config.homeUseJson
     ? `---\n${JSON.stringify(metadata, null, "\t")}\n---\n`
-    : `---\n${YAML.stringify(metadata)}\n---\n`
+    : `---\n${YAML.stringify(metadata)}---\n`
   Deno.writeTextFileSync(`${config.outputDir}/index.md`, content)
 }
 

@@ -1,3 +1,5 @@
+import { getFilename, getExcerpt, countWordsRounded } from "./utils.js"
+
 export default {
   sourceRepo: "",
   // in format of 'owner/repo'
@@ -7,20 +9,33 @@ export default {
   // if empty, all are allowed
 
   outputDir: "output",
-  // where to put the generated files
+  // relative to the root of the repo
   generateIndex: true,
   // whether to generate index.md (a list of posts and labels)
-  extraFrontmatterIndex: {},
-  extraFrontmatterPost: {},
-  // extra front matter for index.md and posts (e.g. specify a layout)
   postUseJson: false,
   homeUseJson: false,
   // if true, use json frontmatter instead of yaml for posts / homepage
 
+  formatFilename: getFilename,
+  // function to format the filename of a post
+  extraFrontmatterPost: (post) => {
+    // add extra entries to each post's frontmatter
+    const wordCounts = countWordsRounded(post.bodyText)
+    return {
+      countZH: wordCounts.zh,
+      countEN: wordCounts.en,
+      excerpt: getExcerpt(post.bodyText),
+    }
+  },
+
+  extraFrontmatterIndex: (metadata) => {
+    // add extra frontmatter to index.md (e.g. layout)
+    return {}
+  },
+
   generateJsonFeed: true,
   generateRssFeed: true,
   // whether to generate feed
-
   postsInFeed: 10,
   // number of posts to include in the feed
 }

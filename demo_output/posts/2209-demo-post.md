@@ -10,7 +10,6 @@ labels:
 countZH: 0
 countEN: 20
 excerpt: some content here (ref 1)
-
 ---
 
 some content here (ref [^1])

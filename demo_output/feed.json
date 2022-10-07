@@ -2,6 +2,7 @@
 	"version": "https://jsonfeed.org/version/1.1",
 	"title": "King-of-Infinite-Space/gh-discussions-export/discussions",
 	"home_page_url": "https://github.com/King-of-Infinite-Space/gh-discussions-export/discussions",
+	"feed_url": "https://cdn.jsdelivr.net/gh/King-of-Infinite-Space/gh-discussions-export/output/feed.json",
 	"items": [
 		{
 			"id": "https://github.com/King-of-Infinite-Space/gh-discussions-export/discussions/1",

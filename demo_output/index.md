@@ -1,4 +1,7 @@
 ---
+categories:
+  - name: Announcements
+    count: 1
 labels:
   - name: good first issue
     count: 1
@@ -14,5 +17,4 @@ posts:
     countZH: 0
     countEN: 20
     excerpt: some content here (ref 1)
-
 ---

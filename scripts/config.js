@@ -10,6 +10,8 @@ export default {
 
   outputDir: "output",
   // relative to the root of the repo
+  postSubDir: "posts",
+  // relative to outputDir
   generateIndex: true,
   // whether to generate index.md (a list of posts and labels)
   postUseJson: false,

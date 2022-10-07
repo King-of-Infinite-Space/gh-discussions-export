@@ -1,6 +1,7 @@
 import "https://deno.land/std@0.153.0/dotenv/load.ts" // load env vars from .env
 import YAML from "https://esm.sh/yaml@2.1.1"
 import RSS from "https://esm.sh/rss@1.2.2"
+import { join } from "https://deno.land/std@0.153.0/path/mod.ts"
 import config from "./config.js"
 
 const sourceRepo = config.sourceRepo || Deno.env.get("GITHUB_REPOSITORY")
@@ -146,7 +147,10 @@ function writePosts(postList) {
       : `---\n${YAML.stringify(frontmatter)}---\n\n${post.body}`
     // yaml already has a newline at the end
 
-    Deno.writeTextFileSync(`${config.outputDir}/${filename}.md`, content)
+    Deno.writeTextFileSync(
+      join(config.outputDir, config.postSubDir, `${filename}.md`),
+      content
+    )
   })
 }
 
@@ -166,7 +170,7 @@ function writeIndex(postList, labelList) {
   const content = config.homeUseJson
     ? `---\n${JSON.stringify(metadata, null, "\t")}\n---\n`
     : `---\n${YAML.stringify(metadata)}---\n`
-  Deno.writeTextFileSync(`${config.outputDir}/index.md`, content)
+  Deno.writeTextFileSync(join(config.outputDir, `index.md`), content)
 }
 
 /**
@@ -182,7 +186,10 @@ function writeJsonFeed(postList) {
     title: `${owner}/${repo}/discussions`,
     // above are required fields
     home_page_url: `https://github.com/${owner}/${repo}/discussions`,
-    feed_url: `https://cdn.jsdelivr.net/gh/${owner}/${repo}/${config.outputDir}/${filename}`,
+    feed_url: `https://cdn.jsdelivr.net/gh/${owner}/${repo}/${join(
+      config.outputDir,
+      filename
+    )}`,
     // above are strongly recommended fields
     items: [],
   }
@@ -206,7 +213,7 @@ function writeJsonFeed(postList) {
   }
 
   Deno.writeTextFileSync(
-    `${config.outputDir}/${filename}`,
+    join(config.outputDir, filename),
     JSON.stringify(feed, null, "\t")
   )
 }
@@ -222,7 +229,10 @@ function writeRssFeed(postList) {
   const feed = new RSS({
     title: `${owner}/${repo}/discussions`,
     site_url: `https://github.com/${owner}/${repo}/discussions`,
-    feed_url: `https://cdn.jsdelivr.net/gh/${owner}/${repo}/${config.outputDir}/${filename}`,
+    feed_url: `https://cdn.jsdelivr.net/gh/${owner}/${repo}/${join(
+      config.outputDir,
+      filename
+    )}`,
   })
   let i = 0
   for (const post of postList) {
@@ -241,7 +251,7 @@ function writeRssFeed(postList) {
     }
   }
 
-  Deno.writeTextFileSync(`${config.outputDir}/${filename}`, feed.xml())
+  Deno.writeTextFileSync(join(config.outputDir, filename), feed.xml())
 }
 
 async function main() {
@@ -253,7 +263,9 @@ async function main() {
   const labelList = getLabelList(postList)
   console.log("Writing files")
   try {
-    Deno.mkdirSync(config.outputDir)
+    Deno.mkdirSync(join(config.outputDir, config.postSubDir), {
+      recursive: true,
+    })
   } catch (e) {
     if (!e instanceof Deno.errors.AlreadyExists) {
       throw e

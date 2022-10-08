@@ -1,16 +1,37 @@
 import wordsCount from "https://esm.sh/words-count@2.0.2"
-import uslug from "https://esm.sh/uslug@1.0.4"
+export { default as strftime } from "https://esm.sh/strftime@0.10.1"
 
-export const getFilename = (post) => {
-  // filename of the generated md files
-  return (
-    new Date(post.createdAt).toISOString().slice(2, 7).replace("-", "") +
-    "-" +
-    uslug(post.title.replace(/\/|\./g, "-"))
-  )
+export function makeSlug(
+  s,
+  { delimiter = "-", disallowed = "", replacements = {}, limit = undefined }
+) {
+  // disallowed in filenames on Windows
+  const disallowedChars = '\\/?*:|"<>' + disallowed
+
+  // Make custom replacements
+  for (const k in replacements) {
+    s = s.replace(RegExp(k, "g"), replacements[k])
+  }
+
+  const chars = []
+  for (let i = 0; i < s.length; i++) {
+    if (disallowedChars.indexOf(s.charAt(i)) === -1) {
+      chars.push(s.charAt(i))
+    } else {
+      chars.push(" ")
+    }
+  }
+
+  s = chars.join("")
+  s = s.trim()
+  s = s.replace(/\s+/g, delimiter)
+
+  s = s.substring(0, limit)
+
+  return s
 }
 
-export function getExcerpt(text) {
+export function makeExcerpt(text) {
   const firstPara = text.split("\n\n")[0]
   let excerpt = firstPara.slice(0, 100)
   const split = excerpt.split("\n")

@@ -1,4 +1,4 @@
-import { getFilename, getExcerpt, countWordsRounded } from "./utils.js"
+import { makeSlug, makeExcerpt, countWordsRounded, strftime } from "./utils.js"
 
 export default {
   sourceRepo: "",
@@ -18,15 +18,30 @@ export default {
   homeUseJson: false,
   // if true, use json frontmatter instead of yaml for posts / homepage
 
-  formatFilename: getFilename,
-  // function to format the filename of a post, default: YYMM-titleslug
+  generateJsonFeed: true,
+  generateRssFeed: true,
+  // whether to generate feed
+  postsInFeed: 10,
+  // number of posts to include in the feed
+
+  formatFilename: (post) => {
+    // function to format the filename of a post
+    let filename = ""
+    filename += strftime("%y%m-", new Date(post.createdAt))
+    // replaces disallowed characters with delimiter (default: '-')
+    filename += makeSlug(post.title, {
+      disallowed: ",", // in addition to \/?*:|"<> and whitespace
+    })
+    return filename
+  },
+
   extraFrontmatterPost: (post) => {
     const wordCounts = countWordsRounded(post.bodyText)
     return {
       // add entries to post frontmatter
       countZH: wordCounts.zh,
       countEN: wordCounts.en,
-      excerpt: getExcerpt(post.bodyText),
+      // excerpt: makeExcerpt(post.bodyText),
     }
   },
 
@@ -35,10 +50,4 @@ export default {
       // add entries to index.md frontmatter (e.g. layout)
     }
   },
-
-  generateJsonFeed: true,
-  generateRssFeed: true,
-  // whether to generate feed
-  postsInFeed: 10,
-  // number of posts to include in the feed
 }

@@ -30,9 +30,11 @@ async function fetchDiscussionsApi(
         ) {
           nodes {
             title
+            number
             url
             createdAt
             lastEditedAt
+            updatedAt
             body
             bodyText
             bodyHTML

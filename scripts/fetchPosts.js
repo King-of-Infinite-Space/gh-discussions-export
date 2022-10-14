@@ -154,10 +154,11 @@ function writePosts(postList) {
     const filename = config.formatFilename(post)
 
     const { body, bodyText, bodyHTML, ...frontmatter } = post
+    const contentBody = config.formatPostBody(post)
 
     const content = config.postUseJson
-      ? `---\n${JSON.stringify(frontmatter, null, "\t")}\n---\n\n${post.body}`
-      : `---\n${YAML.stringify(frontmatter)}---\n\n${post.body}`
+      ? `---\n${JSON.stringify(frontmatter, null, "\t")}\n---\n\n${contentBody}`
+      : `---\n${YAML.stringify(frontmatter)}---\n\n${contentBody}`
     // yaml already has a newline at the end
 
     Deno.writeTextFileSync(

@@ -35,6 +35,11 @@ export default {
     return filename
   },
 
+  formatPostBody: (post) => {
+    return post.body
+  },
+  // main content to write to md
+
   extraFrontmatterPost: (post) => {
     const wordCounts = countWordsRounded(post.bodyText)
     return {

@@ -1,4 +1,4 @@
-import { makeSlug, makeExcerpt, countWordsRounded, strftime } from "./utils.js"
+import { makeExcerpt, makeFilename, countWordsRounded } from "./utils.js"
 
 export default {
   sourceRepo: "",
@@ -25,20 +25,13 @@ export default {
   // number of posts to include in the feed
 
   formatFilename: (post) => {
-    // function to format the filename of a post
-    let filename = ""
-    filename += strftime("%y%m-", new Date(post.createdAt))
-    // replaces disallowed characters with delimiter (default: '-')
-    filename += makeSlug(post.title, {
-      disallowed: ",", // in addition to \/?*:|"<> and whitespace
-    })
-    return filename
+    return makeFilename(post)
   },
 
   formatPostBody: (post) => {
+    // main content to write to md
     return post.body
   },
-  // main content to write to md
 
   extraFrontmatterPost: (post) => {
     const wordCounts = countWordsRounded(post.bodyText)
@@ -46,6 +39,7 @@ export default {
       // add entries to post frontmatter
       countZH: wordCounts.zh,
       countEN: wordCounts.en,
+      filename: makeFilename(post),
       // excerpt: makeExcerpt(post.bodyText),
     }
   },

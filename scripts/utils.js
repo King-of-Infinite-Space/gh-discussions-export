@@ -1,5 +1,18 @@
 import wordsCount from "https://esm.sh/words-count@2.0.2"
-export { default as strftime } from "https://esm.sh/strftime@0.10.1"
+import strftime from "https://esm.sh/strftime@0.10.1"
+
+export function makeFilename(post, format = "%y%m-[slug]") {
+  // function to format the filename of a post
+  let filename = strftime(format, new Date(post.createdAt))
+  filename = filename.replace(
+    "[slug]",
+    makeSlug(post.title, {
+      disallowed: ",", // in addition to \/?*:|"<> and whitespace
+      // disallowed characters are replaced with delimiter (default: '-')
+    })
+  )
+  return filename
+}
 
 export function makeSlug(
   s,

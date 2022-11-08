@@ -6,7 +6,7 @@ Export Discussions in a repo as `.md` files. Also generate an index of posts as 
 #### Usage (Workflow)
 
 1. "Use this template" to create a repo for discussions
-   Or create a workflow like [this](https://github.com/King-of-Infinite-Space/thoughts/blob/master/.github/workflows/main.yml) in an existing repo
+   Or create a workflow like [this](https://github.com/King-of-Infinite-Space/thoughts/blob/8cc5e57c155141d29897f6388a1605360812b18d/.github/workflows/main.yml) in an existing repo
 2. Edit or overwrite  `script/config.js` as needed
 3. The workflow will run automatically when a discussion is created or edited
 

@@ -174,7 +174,7 @@ function writePosts(postList) {
  * @param {Array} labelList
  */
 function writeIndex(postList, labelList, categoryList) {
-  const metadata = Object.assign({}, config.extraFrontmatterIndex)
+  const metadata = {}
   metadata.categories = categoryList
   metadata.labels = labelList
   metadata.posts = postList.map((post) => {

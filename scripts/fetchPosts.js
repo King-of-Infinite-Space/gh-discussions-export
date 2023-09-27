@@ -149,7 +149,7 @@ function getLabelsAndCategories(postList) {
  * Write Discussions to markdown file.
  * @param {Array[Object]} postList processed post data object.
  */
-function writePosts(postList) {
+function writePosts(postList, dir) {
   postList.forEach((post) => {
     const filename = config.formatFilename(post)
 
@@ -160,9 +160,13 @@ function writePosts(postList) {
       ? `---\n${JSON.stringify(frontmatter, null, "\t")}\n---\n\n${contentBody}`
       : `---\n${YAML.stringify(frontmatter)}---\n\n${contentBody}`
     // yaml already has a newline at the end
-
+    let postDir = dir
+    if (config.subDirCategories) {
+      postDir = join(dir, post.category)
+      Deno.mkdirSync(postDir, {recursive: true})
+    }
     Deno.writeTextFileSync(
-      join(config.outputDir, config.postSubDir, `${filename}.md`),
+      join(postDir, `${filename}.md`),
       content
     )
   })
@@ -279,23 +283,25 @@ async function main() {
   const [labelList, categoryList] = getLabelsAndCategories(postList)
 
   console.log("Preparing folders")
-  const postDir = join(config.outputDir, config.postSubDir)
-  try {
-    Deno.removeSync(config.outputDir, {
-      recursive: true,
-    })
-  } catch (e) {
-    if (!(e instanceof Deno.errors.NotFound)) {
-      throw e
+  if (config.cleanOutputDir){
+    try {
+      Deno.removeSync(config.outputDir, {
+        recursive: true,
+      })
+    } catch (e) {
+      if (!(e instanceof Deno.errors.NotFound)) {
+        throw e
+      }
     }
   }
+  const postDir = join(config.outputDir, config.postSubDir)
   Deno.mkdirSync(postDir, {
     recursive: true,
   })
   console.log("\tposts will be saved to", postDir)
 
   console.log("Writing files")
-  writePosts(postList)
+  writePosts(postList, postDir)
   console.log("\tWrote post files")
   if (config.generateIndex) {
     writeIndex(postList, labelList, categoryList)

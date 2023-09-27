@@ -12,6 +12,10 @@ export default {
   // relative to current working directory
   postSubDir: "posts",
   // relative to outputDir
+  subDirCategories: false,
+  // whether to put posts in subdirectories according to categories
+  cleanOutputDir: true,
+  // whether to remove contents of outputDir before writing new files
   generateIndex: true,
   // whether to generate index.md (a list of posts and labels)
   postUseJson: false,

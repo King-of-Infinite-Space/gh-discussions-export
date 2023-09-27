@@ -2,8 +2,10 @@ import "https://deno.land/std@0.153.0/dotenv/load.ts" // load env vars from .env
 import YAML from "https://esm.sh/yaml@2.1.1"
 import RSS from "https://esm.sh/rss@1.2.2"
 import { join } from "https://deno.land/std@0.153.0/path/mod.ts"
-import config from "./config.js"
+import defaultConfig from "./defaultConfig.js"
+import customConfig from "./config.js"
 
+const config = {...defaultConfig, ...customConfig}
 const sourceRepo = config.sourceRepo || Deno.env.get("GITHUB_REPOSITORY")
 const [owner, repo] = sourceRepo.split("/")
 const token = Deno.env.get("GITHUB_TOKEN")
